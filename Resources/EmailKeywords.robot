@@ -16,20 +16,23 @@ Clean up
     DELETE ALL EMAILS
     close mailbox
 Check mail received
-    [Arguments]   ${email_body}
+    [Arguments]   ${subject}
     ${email}=    get environment variable  EMAIL
-    ${LATEST} =    wait for email    recipient=${email}   subject=QA Wolf   timeout=300
+    ${LATEST} =    wait for email    recipient=${email}   subject=${subject}   timeout=300
     ${body}=    get email body  ${LATEST}
-    should contain    ${body}    ${email_body}
+    should contain    ${body}    ${subject}
 Get latest email body
+    [Arguments]   ${subject}
     ${email}=    get environment variable  EMAIL
-    ${LATEST} =    wait for email    recipient=${email}   subject=QA Wolf   timeout=300
+    ${LATEST} =    wait for email    recipient=${email}   subject=${subject}   timeout=300
     ${body}=    get email body  ${LATEST}
     [Return]    ${body}
 Get code from email
+    [Arguments]   ${subject}
     ${regex}=   set variable    <p .*>([A-Z]{3}-[A-Z]{3})
-    ${body} =    Get latest email body
-    ${result} =     get regexp matches    ${body}   ${regex}  1
+    ${email}=    get environment variable  EMAIL
+    ${LATEST} =    wait for email    recipient=${email}   subject=${subject}   timeout=300
+    ${result} =    Get Matches From Email     ${LATEST}    ${regex}
     ${result} =     convert to string    ${result}
     ${result} =     get substring   ${result}   2  9
     ${result} =     remove string   ${result}   -
